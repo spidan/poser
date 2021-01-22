@@ -1,5 +1,6 @@
 package de.dfki.asr.poser.util;
 
+import de.dfki.asr.poser.exceptions.DataTypeException;
 import static org.junit.Assert.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -35,12 +36,6 @@ public class RDFModelUtilTest {
 		Model jsonModel = stringToModel(jsonModelAsString);
 		String inputFromModel = RDFModelUtil.getDesiredInputType(jsonModel);
 		assertEquals(inputFromModel, "http://iotschema.org/TimeSeries");
-	}
-
-	private Model stringToModel(String jsonModelAsString) throws IOException, RDFParseException, UnsupportedRDFormatException {
-		InputStream inStream = new ByteArrayInputStream(jsonModelAsString.getBytes());
-		Model jsonModel = Rio.parse(inStream, RDFFormat.TURTLE);
-		return jsonModel;
 	}
 
 	@Test
@@ -202,4 +197,80 @@ public class RDFModelUtilTest {
 		String typeStringResult = RDFModelUtil.getTypeOfValue(valueIri, jsonModel);
 		assertNotEquals("http://iotschema.org/TemperatureData", typeStringResult);
 	}
+
+	@Test
+	public void getPredicateNameForTypeFromModelShouldReturnPredicateName() throws IOException {
+		String modelRepresentationString = "@prefix ctd: <http://connectd.api/> .\n" +
+					"@prefix onto: <http://ontodm.com/OntoDT#> .\n" +
+					"@prefix iots: <http://iotschema.org/> .\n" +
+					"@prefix json: <http://some.json.ontology/> .\n" +
+					"@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n" +
+					"\n" +
+					"# Which inputs to expect and to start mapping from\n" +
+					"json:InputDataType {\n" +
+					"	json:EntryPoint a iots:TimeSeries;\n" +
+					"		iots:providesTemperatureData iots:TemperatureData;\n" +
+					"		iots:providesTimeData iots:TimeData .\n" +
+					"	\n" +
+					"	iots:TemperatureData iots:numberDataType iots:Number .\n" +
+					"}";
+		Model dataTypeModel = stringToContextedModel(modelRepresentationString);
+		String predicateName = RDFModelUtil.getPredicateNameForTypeFromModel("http://iotschema.org/TemperatureData", dataTypeModel);
+		assertEquals("http://iotschema.org/numberDataType", predicateName);
+	}
+
+	@Test(expected = DataTypeException.class)
+	public void getPredicateNameForTypeFromModelShouldFailWithMissingDatatype() throws IOException {
+		String modelRepresentationString = "@prefix ctd: <http://connectd.api/> .\n" +
+					"@prefix onto: <http://ontodm.com/OntoDT#> .\n" +
+					"@prefix iots: <http://iotschema.org/> .\n" +
+					"@prefix json: <http://some.json.ontology/> .\n" +
+					"@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n" +
+					"\n" +
+					"# Which inputs to expect and to start mapping from\n" +
+					"json:InputDataType {\n" +
+					"	json:EntryPoint a iots:TimeSeries;\n" +
+					"		iots:providesTemperatureData iots:TemperatureData;\n" +
+					"		iots:providesTimeData iots:TimeData .\n" +
+					"	\n" +
+					"}";
+		Model dataTypeModel = stringToContextedModel(modelRepresentationString);
+		String predicateName = RDFModelUtil.getPredicateNameForTypeFromModel("http://iotschema.org/TemperatureData", dataTypeModel);
+		assertNotEquals("http://iotschema.org/numberDataType", predicateName);
+	}
+
+	@Test(expected = DataTypeException.class)
+	public void getPredicateNameForTypeFromModelShouldFailWithMultipleDatatypes() throws IOException {
+		String modelRepresentationString = "@prefix ctd: <http://connectd.api/> .\n" +
+					"@prefix onto: <http://ontodm.com/OntoDT#> .\n" +
+					"@prefix iots: <http://iotschema.org/> .\n" +
+					"@prefix json: <http://some.json.ontology/> .\n" +
+					"@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n" +
+					"\n" +
+					"# Which inputs to expect and to start mapping from\n" +
+					"json:InputDataType {\n" +
+					"	json:EntryPoint a iots:TimeSeries;\n" +
+					"		iots:providesTemperatureData iots:TemperatureData;\n" +
+					"		iots:providesTimeData iots:TimeData .\n" +
+					"	\n" +
+					"	iots:TemperatureData iots:numberDataType iots:Number .\n" +
+					"	iots:TemperatureData iots:secondDataType iots:Number .\n" +
+					"}";
+		Model dataTypeModel = stringToContextedModel(modelRepresentationString);
+		String predicateName = RDFModelUtil.getPredicateNameForTypeFromModel("http://iotschema.org/TemperatureData", dataTypeModel);
+		assertNotEquals("http://iotschema.org/numberDataType", predicateName);
+	}
+
+	private Model stringToModel(String jsonModelAsString) throws IOException, RDFParseException, UnsupportedRDFormatException {
+		InputStream inStream = new ByteArrayInputStream(jsonModelAsString.getBytes());
+		Model jsonModel = Rio.parse(inStream, RDFFormat.TURTLE);
+		return jsonModel;
+	}
+
+	private Model stringToContextedModel(String jsonModelAsString) throws IOException, RDFParseException, UnsupportedRDFormatException {
+		InputStream inStream = new ByteArrayInputStream(jsonModelAsString.getBytes());
+		Model jsonModel = Rio.parse(inStream, RDFFormat.TRIG);
+		return jsonModel;
+	}
+
 }
