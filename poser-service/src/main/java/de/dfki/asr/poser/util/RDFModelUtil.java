@@ -95,4 +95,21 @@ public class RDFModelUtil {
 		}
 		return (values.iterator().next().stringValue().equals("http://some.json.ontology/literal"));
 	}
+
+	/**
+	 * Get the type of a value from the JSON descriptionModel
+	 * @param value The JSON value for which the corresponding semantic type description is needed
+	 * @param jsonModel The model representing the JSON payload description
+	 * @return The value in string representation
+	 */
+	public static String getTypeOfValue(Value value, Model jsonModel) {
+		ValueFactory vf = SimpleValueFactory.getInstance();
+		IRI valueObjectIri = vf.createIRI(value.stringValue());
+		IRI dataTypeIri = vf.createIRI("http://some.json.ontology/dataType");
+		Set<Value> datatypes = jsonModel.filter(valueObjectIri, dataTypeIri, null).objects();
+		if (datatypes.isEmpty()) {
+			throw new NoSuchElementException("JSON object contains no reference to a semantic datatype");
+		}
+		return datatypes.iterator().next().stringValue();
+	}
 }

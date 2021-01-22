@@ -47,7 +47,7 @@ public class RdfToJson {
 			}
 			else
 			{
-				String valueType = getTypeOfValue(value);
+				String valueType = RDFModelUtil.getTypeOfValue(value, jsonModel);
 				addToResult(buildJsonObjectFromDescriptionFile(valueType, jsonModel), jsonKey);
 			}
 		}
@@ -57,9 +57,4 @@ public class RdfToJson {
 	private void addToResult(JSONObject resultObject, String jsonKey) {
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
-
-	private String getTypeOfValue(Object value) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
 }
