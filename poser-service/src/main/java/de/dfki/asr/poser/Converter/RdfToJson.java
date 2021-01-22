@@ -1,5 +1,6 @@
 package de.dfki.asr.poser.Converter;
 
+import de.dfki.asr.poser.util.InputDataReader;
 import de.dfki.asr.poser.util.RDFModelUtil;
 import java.util.Set;
 import org.eclipse.rdf4j.model.IRI;
@@ -43,18 +44,21 @@ public class RdfToJson {
 		Set<Value> values = RDFModelUtil.getValuesForObject(jsonObjectModel);
 		for(Value value: values) {
 			if (RDFModelUtil.isLiteral(value, jsonModel)) {
-				addToResult(resultObject, jsonKey);
+				addToResult(resultObject, jsonKey, value);
 			}
 			else
 			{
 				String valueType = RDFModelUtil.getTypeOfValue(value, jsonModel);
-				addToResult(buildJsonObjectFromDescriptionFile(valueType, jsonModel), jsonKey);
+				JSONObject valueObject = buildJsonObjectFromDescriptionFile(valueType, jsonModel);
 			}
 		}
 		return resultObject;
 	}
 
-	private void addToResult(JSONObject resultObject, String jsonKey) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	private void addToResult(JSONObject resultObject, String jsonKey, Value value) {
+		String valueType = RDFModelUtil.getTypeOfValue(value, jsonModel);
+		String propertyName = RDFModelUtil.getPredicateNameForTypeFromModel(valueType, jsonModel);
+		String valueResult = InputDataReader.getValueForType(valueType, propertyName, inputModel);
+		resultObject.append(jsonKey, valueResult);
 	}
 }
