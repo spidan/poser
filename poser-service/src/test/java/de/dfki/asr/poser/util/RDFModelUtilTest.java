@@ -47,12 +47,12 @@ public class RDFModelUtilTest {
 			"@prefix xsd: <http://www.w3.org/2001/XMLSchema#> ." +
 			"ctd:TimeStamp a json:object ;\n" +
 			"	json:key \"timestamp\"^^xsd:string ;\n" +
-			"	json:value iots:TimeData ;\n" +
+			"	json:dataType iots:TimeData ;\n" +
 			"	json:parent ctd:Node .\n" +
 			"\n" +
 			"ctd:Node a json:object	;\n" +
 			"	json:key \"node\"^^xsd:string ;\n" +
-			"	json:value iots:TimeSeries;\n" +
+			"	json:dataType iots:TimeSeries;\n" +
 			"	json:children ctd:TimeStamp, ctd:TemperatureValue .";
 		Model jsonModel = stringToModel(jsonModelAsString);
 		String jsonType = "http://iotschema.org/TimeSeries";
@@ -64,7 +64,7 @@ public class RDFModelUtilTest {
 			"\n" +
 				"ctd:Node a json:object	;\n" +
 			"	json:key \"node\"^^xsd:string ;\n" +
-			"	json:value iots:TimeSeries;\n" +
+			"	json:dataType iots:TimeSeries;\n" +
 			"	json:children ctd:TimeStamp, ctd:TemperatureValue .";
 		Model resultModel = RDFModelUtil.getModelForJsonObject(jsonType, jsonModel);
 		assertEquals(stringToModel(expectedResultModelString), resultModel);
@@ -80,7 +80,7 @@ public class RDFModelUtilTest {
 			"\n" +
 				"ctd:Node a json:object	;\n" +
 			"	json:key \"node\"^^xsd:string ;\n" +
-			"	json:value iots:TimeSeries;\n" +
+			"	json:dataType iots:TimeSeries;\n" +
 			"	json:children ctd:TimeStamp, ctd:TemperatureValue .";
 		Model objectModel = stringToModel(objectRepresentationString);
 		String jsonKey = RDFModelUtil.getKeyForObject(objectModel);
