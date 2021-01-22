@@ -11,6 +11,8 @@ import org.json.JSONObject;
 
 public class RdfToJson {
 
+	private Model inputModel;
+	private Model jsonModel;
 	/**
 	 * Receives data in ttl format, finds the corresponding json objects to be generated
 	 * in the semantic description of the target payload and generates the necessary objects
@@ -20,6 +22,9 @@ public class RdfToJson {
 	 * @return
 	 */
 	public String buildJsonString(final Model inputModel, final Model jsonModel) {
+		this.inputModel = inputModel;
+		this.jsonModel = jsonModel;
+
 		ValueFactory vf = SimpleValueFactory.getInstance();
 		inputModel.setNamespace("rdfs", "https://www.w3.org/TR/rdf-schema/");
 		inputModel.setNamespace("json", "http://some.json.ontology/");
