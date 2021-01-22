@@ -1,0 +1,45 @@
+@prefix ctd: <http://connectd.api/> .
+@prefix onto: <http://ontodm.com/OntoDT#> .
+@prefix iots: <http://iotschema.org/> .
+@prefix json: <http://some.json.ontology/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Which inputs to expect and to start mapping from
+ctd:InputDataType {
+	json:EntryPoint a iots:TimeSeries;
+		iots:providesTemperatureData iots:TemperatureData;
+		iots:providesTimeData iots:TimeData .
+}
+
+#Semantic description of the json objects to be found in the expected API
+
+ctd:ApiDescription {
+	ctd:TemperatureValue a json:object ;
+		json:key "value"^^xsd:string ;
+		json:dataType iots:TemperatureData ;
+		json:value json:literal;
+		json:parent ctd:Node .
+		
+	ctd:TimeStamp a json:object ;
+		json:key "timestamp"^^xsd:string ;
+		json:dataType iots:TimeData ;
+		json:value json:literal;
+		json:parent ctd:Node .
+
+	ctd:Node a json:object	;
+		json:key "node"^^xsd:string ;
+		json:dataType iots:TimeSeries;
+		json:value ctd:TempTimePair;
+		json:children ctd:TimeStamp, ctd:TemperatureValue .
+
+	ctd:TempTimePair a json:object;
+		json:value ctd:TemperatureValue;
+		json:value ctd:TimeStamp .
+		
+	ctd:NodeArray a json:array ;
+		json:arrayType ctd:Node .
+
+	ctd:Edges a json:object	;
+		json:key "edges"^^xsd:string ;
+		json:value ctd:NodeArray .
+}
