@@ -1,5 +1,6 @@
 package de.dfki.asr.poser.util;
 
+import de.dfki.asr.poser.exceptions.DataTypeException;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -111,5 +112,15 @@ public class RDFModelUtil {
 			throw new NoSuchElementException("JSON object contains no reference to a semantic datatype");
 		}
 		return datatypes.iterator().next().stringValue();
+	}
+
+	public static String getPredicateNameForTypeFromModel(String dataType, Model jsonModel ) {
+		IRI dataTypeIri = SimpleValueFactory.getInstance().createIRI(dataType);
+		IRI dataTypeContext = SimpleValueFactory.getInstance().createIRI("http://some.json.ontology/InputDataType");
+		Set<IRI> predicates = jsonModel.filter(dataTypeIri, null, null, dataTypeContext).predicates();
+		if (predicates.size() != 1) {
+			throw new DataTypeException("No unique data type definition found");
+		}
+		return predicates.iterator().next().stringValue();
 	}
 }
