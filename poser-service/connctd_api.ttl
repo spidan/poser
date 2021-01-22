@@ -5,7 +5,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 # Which inputs to expect and to start mapping from
-ctd:InputDataType {
+json:InputDataType {
 	json:EntryPoint a iots:TimeSeries;
 		iots:providesTemperatureData iots:TemperatureData;
 		iots:providesTimeData iots:TimeData .
@@ -13,7 +13,7 @@ ctd:InputDataType {
 
 #Semantic description of the json objects to be found in the expected API
 
-ctd:ApiDescription {
+json:ApiDescription {
 	ctd:TemperatureValue a json:object ;
 		json:key "value"^^xsd:string ;
 		json:dataType iots:TemperatureData ;
