@@ -19,11 +19,12 @@ public class RDFModelUtil {
 	/**
 	 * Get the semantic representation of the JSON Object to be constructed from the JSON modelfile
 	 * @param jsonType The type for which to build the JSON Object
+	 * @param jsonModel The RDF model of the expected JSON API
 	 * @return The model describing the Json Object for the given type
 	 */
 	public static Model getModelForJsonObject(String jsonType, Model jsonModel) {
 		ValueFactory vf = SimpleValueFactory.getInstance();
-		IRI predicateValueIri = vf.createIRI("http://some.json.ontology/value");
+		IRI predicateValueIri = vf.createIRI("http://some.json.ontology/dataType");
 		IRI objectJsonTypeIri = vf.createIRI(jsonType);
 		// get the subject of the model representing the data
 		Resource jsonObjectDescription = jsonModel.filter(null, predicateValueIri, objectJsonTypeIri).subjects().iterator().next();
