@@ -171,4 +171,35 @@ public class RDFModelUtilTest {
 		Value valueToCheck = SimpleValueFactory.getInstance().createIRI("http://connectd.api/TemperatureValue");
 		assertFalse(RDFModelUtil.isLiteral(valueToCheck, jsonModel));
 	}
+
+	@Test
+	public void getTypeOfValueShouldReturnDatatype() throws IOException {
+		String modelRepresentationString = "@prefix ctd: <http://connectd.api/> .\n" +
+				"@prefix iots: <http://iotschema.org/> .\n" +
+				"@prefix json: <http://some.json.ontology/> .\n" +
+				"ctd:TemperatureValue a json:object ;\n" +
+				"		json:key \"value\"^^xsd:string ;\n" +
+				"		json:dataType iots:TemperatureData ;\n" +
+				"		json:value json:literal;\n" +
+				"		json:parent ctd:Node .";
+		Model jsonModel = stringToModel(modelRepresentationString);
+		Value valueIri = SimpleValueFactory.getInstance().createIRI("http://connectd.api/TemperatureValue");
+		String typeStringResult = RDFModelUtil.getTypeOfValue(valueIri, jsonModel);
+		assertEquals("http://iotschema.org/TemperatureData", typeStringResult);
+	}
+
+	@Test(expected = NoSuchElementException.class)
+	public void getTypeOfValueShouldThrowExceptionWhenNoDatatypePresent() throws IOException {
+		String modelRepresentationString = "@prefix ctd: <http://connectd.api/> .\n" +
+				"@prefix iots: <http://iotschema.org/> .\n" +
+				"@prefix json: <http://some.json.ontology/> .\n" +
+				"ctd:TemperatureValue a json:object ;\n" +
+				"		json:key \"value\"^^xsd:string ;\n" +
+				"		json:value json:literal;\n" +
+				"		json:parent ctd:Node .";
+		Model jsonModel = stringToModel(modelRepresentationString);
+		Value valueIri = SimpleValueFactory.getInstance().createIRI("http://connectd.api/TemperatureValue");
+		String typeStringResult = RDFModelUtil.getTypeOfValue(valueIri, jsonModel);
+		assertNotEquals("http://iotschema.org/TemperatureData", typeStringResult);
+	}
 }
