@@ -1,7 +1,9 @@
 package de.dfki.asr.poser.util;
 
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Model;
