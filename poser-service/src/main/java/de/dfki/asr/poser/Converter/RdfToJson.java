@@ -35,8 +35,8 @@ public class RdfToJson {
 		Model jsonObjectModel = RDFModelUtil.getModelForJsonObject(jsonType, jsonModel);
 		JSONObject resultObject = new JSONObject();
 		String jsonKey = RDFModelUtil.getKeyForObject(jsonObjectModel);
-		ArrayList<Object> values = getValuesForObject(jsonObjectModel);
-		for(Object value: values) {
+		Set<Value> values = RDFModelUtil.getValuesForObject(jsonObjectModel);
+		for(Value value: values) {
 			if (isLiteral(value)) {
 				addToResult(resultObject, jsonKey);
 			}
@@ -47,10 +47,6 @@ public class RdfToJson {
 			}
 		}
 		return resultObject;
-	}
-
-	private ArrayList<Object> getValuesForObject(Model jsonObjectModel) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 	private boolean isLiteral(Object value) {

@@ -61,4 +61,17 @@ public class RDFModelUtil {
 		}
 		return key.get().stringValue();
 	}
+
+	/**
+	 * Get the values from the provided json object model
+	 * @param jsonObjectModel
+	 * @return A list of values
+	 */
+	public static Set<Value> getValuesForObject(Model jsonObjectModel) {
+		ValueFactory vf = SimpleValueFactory.getInstance();
+		IRI dataTypeIri = vf.createIRI("http://some.json.ontology/value");
+		Set<Value> valueModel = jsonObjectModel.filter(null, dataTypeIri, null).objects();
+		return valueModel;
+	}
+
 }
