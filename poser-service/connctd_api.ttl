@@ -9,6 +9,8 @@ json:InputDataType {
 	json:EntryPoint a iots:TimeSeries;
 		iots:providesTemperatureData iots:TemperatureData;
 		iots:providesTimeData iots:TimeData .
+
+	iots:TemperatureData iots:numberDataType iots:Number .
 }
 
 #Semantic description of the json objects to be found in the expected API
