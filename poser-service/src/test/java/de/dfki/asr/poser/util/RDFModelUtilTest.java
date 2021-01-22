@@ -4,7 +4,12 @@ import static org.junit.Assert.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.RDFParseException;
 import org.eclipse.rdf4j.rio.Rio;
@@ -86,4 +91,25 @@ public class RDFModelUtilTest {
 		String jsonKey = RDFModelUtil.getKeyForObject(objectModel);
 		assertEquals("node", jsonKey);
 	}
+
+	@Test
+	public void getValuesShouldGetValueFromObject() throws IOException {
+		String objectRepresentationString = "@prefix ctd: <http://connectd.api/> .\n" +
+			"@prefix onto: <http://ontodm.com/OntoDT#> .\n" +
+			"@prefix iots: <http://iotschema.org/> .\n" +
+			"@prefix json: <http://some.json.ontology/> .\n" +
+			"@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n" +
+			"\n" +
+		"ctd:Node a json:object	;\n" +
+"		json:key \"node\"^^xsd:string ;\n" +
+"		json:dataType iots:TimeSeries;\n" +
+"		json:value ctd:TempTimePair;\n" +
+"		json:children ctd:TimeStamp, ctd:TemperatureValue .";
+		Model objectModel = stringToModel(objectRepresentationString);
+		Set<Value> resultSet = RDFModelUtil.getValuesForObject(objectModel);
+		IRI resultIri = SimpleValueFactory.getInstance().createIRI("http://connectd.api/TempTimePair");
+		assertEquals(1, resultSet.size());
+		assertTrue(resultSet.contains(resultIri));
+	}
+
 }
