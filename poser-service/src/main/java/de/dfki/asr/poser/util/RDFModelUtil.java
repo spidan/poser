@@ -3,6 +3,7 @@ package de.dfki.asr.poser.util;
 import de.dfki.asr.poser.Namespace.JSON;
 import de.dfki.asr.poser.exceptions.DataTypeException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
@@ -18,6 +19,8 @@ import org.eclipse.rdf4j.model.util.Models;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
 
 public class RDFModelUtil {
+
+	private static final Set<IRI> LITERAL_JSON_TYPES = getLiteralJsonTypes();
 
 	/**
 	 * Get the semantic representation of the JSON Object to be constructed from the JSON modelfile
@@ -89,7 +92,7 @@ public class RDFModelUtil {
 	 * @return true if the value is a literal, false otherwise
 	 */
 	public static boolean isLiteral(Value value) {
-		return (value.stringValue().equals("http://some.json.ontology/literal"));
+		return LITERAL_JSON_TYPES.contains(value);
 	}
 
 	/**
@@ -134,5 +137,13 @@ public class RDFModelUtil {
 		}
 		IRI dataType = apiDataType.get();
 		return dataType.stringValue();
+	}
+
+	private static Set<IRI> getLiteralJsonTypes() {
+		Set<IRI> literalTypes = new HashSet<>();
+		literalTypes.add(JSON.NUMBER);
+		literalTypes.add(JSON.STRING);
+		literalTypes.add(JSON.BOOLEAN);
+		return literalTypes;
 	}
 }
