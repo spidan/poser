@@ -1,11 +1,11 @@
-package Application;
+package de.dfki.asr.poser;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class PoserSpringbootApplication {
+public class PoserApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(PoserSpringbootApplication.class, args);
+		SpringApplication.run(PoserApplication.class, args);
 	}
 }
