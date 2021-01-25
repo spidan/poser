@@ -79,22 +79,10 @@ public class RDFModelUtil {
 	/**
 	 * Check whether the given value is a literal, according to the json description model provided
 	 * @param value the IRI of the value to be checked for being a literal
-	 * @param jsonModel the model representing the JSON payload description
 	 * @return true if the value is a literal, false otherwise
 	 */
-	public static boolean isLiteral(Value value, Model jsonModel) {
-		IRI objectIri = SimpleValueFactory.getInstance().createIRI(value.stringValue());
-		Model valueModel = jsonModel.filter(objectIri, null, null);
-		IRI valueIri = SimpleValueFactory.getInstance().createIRI("http://some.json.ontology/value");
-		Model valueOfThisObject = valueModel.filter(null, valueIri, null);
-		Set<Value> values = valueOfThisObject.objects();
-		if (values.isEmpty()) {
-			throw new NoSuchElementException("JSON object is missing a value definition");
-		}
-		if(values.size() > 1) {
-			return false; // result is a list of values, not a single literal, so we can safely assume this is not a literal
-		}
-		return (values.iterator().next().stringValue().equals("http://some.json.ontology/literal"));
+	public static boolean isLiteral(Value value) {
+		return (value.stringValue().equals("http://some.json.ontology/literal"));
 	}
 
 	/**

@@ -43,7 +43,7 @@ public class RdfToJson {
 		String jsonKey = RDFModelUtil.getKeyForObject(jsonObjectModel);
 		Set<Value> values = RDFModelUtil.getValuesForObject(jsonObjectModel);
 		for(Value value: values) {
-			if (RDFModelUtil.isLiteral(value, jsonModel)) {
+			if (RDFModelUtil.isLiteral(value)) {
 				addToResult(resultObject, jsonKey, value);
 			}
 			else
