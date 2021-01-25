@@ -1,9 +1,8 @@
 package de.dfki.asr.poser.Converter;
 
+import de.dfki.asr.poser.Namespace.JSON;
 import de.dfki.asr.poser.util.InputDataReader;
 import de.dfki.asr.poser.util.RDFModelUtil;
-import java.util.Set;
-import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.ValueFactory;
@@ -41,24 +40,24 @@ public class RdfToJson {
 		Model jsonObjectModel = RDFModelUtil.getModelForJsonObject(jsonType, jsonModel);
 		JSONObject resultObject = new JSONObject();
 		String jsonKey = RDFModelUtil.getKeyForObject(jsonObjectModel);
-		Set<Value> values = RDFModelUtil.getValuesForObject(jsonObjectModel);
-		for(Value value: values) {
-			if (RDFModelUtil.isLiteral(value, jsonModel)) {
-				addToResult(resultObject, jsonKey, value);
+		Value jsonDataType = RDFModelUtil.getValueTypeForObject(jsonObjectModel);
+		if (RDFModelUtil.isLiteral(jsonDataType)) {
+			String valueType = RDFModelUtil.getCorrespondingInputValueType(jsonObjectModel, jsonModel);
+			String propertyName = RDFModelUtil.getPredicateNameForTypeFromModel(valueType, jsonModel);
+			String valueResult = InputDataReader.getValueForType(valueType, propertyName, inputModel);
+			if (JSON.NUMBER.equals(jsonDataType)) {
+				addToResult(resultObject, jsonKey, Double.parseDouble(valueResult));
 			}
-			else
-			{
-				String valueType = RDFModelUtil.getTypeOfValue(value, jsonModel);
-				JSONObject valueObject = buildJsonObjectFromDescriptionFile(valueType, jsonModel);
+			else if (JSON.BOOLEAN.equals(jsonDataType)) {
+				Boolean resultValue = ("1".equals(valueResult) || "true".equalsIgnoreCase(valueResult));
+				addToResult(resultObject, jsonKey, resultValue);
 			}
+			else addToResult(resultObject, jsonKey, valueResult);
 		}
 		return resultObject;
 	}
 
-	private void addToResult(JSONObject resultObject, String jsonKey, Value value) {
-		String valueType = RDFModelUtil.getTypeOfValue(value, jsonModel);
-		String propertyName = RDFModelUtil.getPredicateNameForTypeFromModel(valueType, jsonModel);
-		String valueResult = InputDataReader.getValueForType(valueType, propertyName, inputModel);
-		resultObject.append(jsonKey, valueResult);
+	private void addToResult(JSONObject resultObject, String jsonKey, Object jsonValue) {
+		resultObject.accumulate(jsonKey, jsonValue);
 	}
 }

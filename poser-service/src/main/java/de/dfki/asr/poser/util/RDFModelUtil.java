@@ -1,7 +1,9 @@
 package de.dfki.asr.poser.util;
 
+import de.dfki.asr.poser.Namespace.JSON;
 import de.dfki.asr.poser.exceptions.DataTypeException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
@@ -14,8 +16,11 @@ import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.util.Models;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
 
 public class RDFModelUtil {
+
+	private static final Set<IRI> LITERAL_JSON_TYPES = getLiteralJsonTypes();
 
 	/**
 	 * Get the semantic representation of the JSON Object to be constructed from the JSON modelfile
@@ -65,36 +70,29 @@ public class RDFModelUtil {
 	}
 
 	/**
-	 * Get the values from the provided json object model
+	 * Get the resources from the provided json object model that will be represented as a literal,
+	 * and as such need to be retrieved from the semantic input
 	 * @param jsonObjectModel
-	 * @return A list of values
+	 * @return The list of values that need to be read from the semantic input data
 	 */
-	public static Set<Value> getValuesForObject(Model jsonObjectModel) {
-		ValueFactory vf = SimpleValueFactory.getInstance();
-		IRI dataTypeIri = vf.createIRI("http://some.json.ontology/value");
-		Set<Value> valueModel = jsonObjectModel.filter(null, dataTypeIri, null).objects();
-		return valueModel;
+	public static Value getValueTypeForObject(Model jsonObjectModel) {
+		Set<Value> valueModel = jsonObjectModel.filter(null, RDF.TYPE , null).objects();
+		if (valueModel.isEmpty()) {
+			throw new NoSuchElementException("Object is missing a value definition");
+		}
+		if (valueModel.size() > 1) {
+			throw new DataTypeException("Multiple data types defined for object");
+		}
+		return valueModel.iterator().next();
 	}
 
 	/**
 	 * Check whether the given value is a literal, according to the json description model provided
 	 * @param value the IRI of the value to be checked for being a literal
-	 * @param jsonModel the model representing the JSON payload description
 	 * @return true if the value is a literal, false otherwise
 	 */
-	public static boolean isLiteral(Value value, Model jsonModel) {
-		IRI objectIri = SimpleValueFactory.getInstance().createIRI(value.stringValue());
-		Model valueModel = jsonModel.filter(objectIri, null, null);
-		IRI valueIri = SimpleValueFactory.getInstance().createIRI("http://some.json.ontology/value");
-		Model valueOfThisObject = valueModel.filter(null, valueIri, null);
-		Set<Value> values = valueOfThisObject.objects();
-		if (values.isEmpty()) {
-			throw new NoSuchElementException("JSON object is missing a value definition");
-		}
-		if(values.size() > 1) {
-			return false; // result is a list of values, not a single literal, so we can safely assume this is not a literal
-		}
-		return (values.iterator().next().stringValue().equals("http://some.json.ontology/literal"));
+	public static boolean isLiteral(Value value) {
+		return LITERAL_JSON_TYPES.contains(value);
 	}
 
 	/**
@@ -122,5 +120,30 @@ public class RDFModelUtil {
 			throw new DataTypeException("No unique data type definition found");
 		}
 		return predicates.iterator().next().stringValue();
+	}
+
+	/**
+	 * Returns the type to be checked for in the input data set, depending on the description in the json object model
+	 * @param jsonObjectModel The model for the JSON object to be generated
+	 * @param jsonModel The model API description including the input data description
+	 * @return The type of the value to check for in the input data type description
+	 */
+	public static String getCorrespondingInputValueType(Model jsonObjectModel, Model jsonModel) {
+		ValueFactory vf = SimpleValueFactory.getInstance();
+		IRI dataTypePredicateIri = vf.createIRI("http://some.json.ontology/dataType");
+		Optional<IRI> apiDataType = Models.objectIRI(jsonObjectModel.filter(null, dataTypePredicateIri, null));
+		if(apiDataType.isEmpty()) {
+			throw new DataTypeException("No input data type found for a value");
+		}
+		IRI dataType = apiDataType.get();
+		return dataType.stringValue();
+	}
+
+	private static Set<IRI> getLiteralJsonTypes() {
+		Set<IRI> literalTypes = new HashSet<>();
+		literalTypes.add(JSON.NUMBER);
+		literalTypes.add(JSON.STRING);
+		literalTypes.add(JSON.BOOLEAN);
+		return literalTypes;
 	}
 }
