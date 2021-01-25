@@ -3,7 +3,6 @@ package de.dfki.asr.poser.Converter;
 import de.dfki.asr.poser.util.InputDataReader;
 import de.dfki.asr.poser.util.RDFModelUtil;
 import java.util.Set;
-import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.ValueFactory;
