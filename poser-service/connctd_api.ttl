@@ -16,32 +16,26 @@ json:InputDataType {
 #Semantic description of the json objects to be found in the expected API
 
 json:ApiDescription {
-	ctd:TemperatureValue a json:object ;
+	ctd:TemperatureValue a json:Number ;
 		json:key "value"^^xsd:string ;
 		json:dataType iots:TemperatureData ;
-		json:value json:literal;
 		json:parent ctd:Node .
 		
-	ctd:TimeStamp a json:object ;
+	ctd:TimeStamp a json:String ;
 		json:key "timestamp"^^xsd:string ;
 		json:dataType iots:TimeData ;
-		json:value json:literal;
 		json:parent ctd:Node .
 
-	ctd:Node a json:object	;
+	ctd:Node a json:Object;
 		json:key "node"^^xsd:string ;
 		json:dataType iots:TimeSeries;
-		json:value ctd:TempTimePair;
 		json:children ctd:TimeStamp, ctd:TemperatureValue .
 
-	ctd:TempTimePair a json:object;
-		json:value ctd:TemperatureValue;
-		json:value ctd:TimeStamp .
-		
-	ctd:NodeArray a json:array ;
-		json:arrayType ctd:Node .
+	ctd:TempTimePair a json:Object;
+		json:dataType ctd:TemperatureValue;
+		json:dataType ctd:TimeStamp .
 
-	ctd:Edges a json:object	;
+	ctd:Edges a json:Array	;
 		json:key "edges"^^xsd:string ;
-		json:value ctd:NodeArray .
+		json:dataType ctd:Node .
 }

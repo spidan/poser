@@ -1,5 +1,6 @@
 package de.dfki.asr.poser.util;
 
+import de.dfki.asr.poser.Namespace.JSON;
 import de.dfki.asr.poser.exceptions.DataTypeException;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
@@ -14,6 +15,7 @@ import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.util.Models;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
 
 public class RDFModelUtil {
 
@@ -71,8 +73,7 @@ public class RDFModelUtil {
 	 */
 	public static Set<Value> getValuesForObject(Model jsonObjectModel) {
 		ValueFactory vf = SimpleValueFactory.getInstance();
-		IRI dataTypeIri = vf.createIRI("http://some.json.ontology/value");
-		Set<Value> valueModel = jsonObjectModel.filter(null, dataTypeIri, null).objects();
+		Set<Value> valueModel = jsonObjectModel.filter(null, RDF.TYPE , null).objects();
 		return valueModel;
 	}
 
