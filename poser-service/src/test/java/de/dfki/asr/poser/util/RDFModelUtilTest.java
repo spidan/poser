@@ -1,5 +1,6 @@
 package de.dfki.asr.poser.util;
 
+import de.dfki.asr.poser.Namespace.JSON;
 import de.dfki.asr.poser.exceptions.DataTypeException;
 import static org.junit.Assert.*;
 import java.io.ByteArrayInputStream;
@@ -90,86 +91,34 @@ public class RDFModelUtilTest {
 	}
 
 	@Test
-	public void getValuesShouldGetValueFromObject() throws IOException {
+	public void getValueTypeForObjectShouldReturnJsonTypeOfObject() throws IOException {
 		String objectRepresentationString = "@prefix ctd: <http://connectd.api/> .\n" +
 			"@prefix onto: <http://ontodm.com/OntoDT#> .\n" +
 			"@prefix iots: <http://iotschema.org/> .\n" +
 			"@prefix json: <http://some.json.ontology/> .\n" +
 			"@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n" +
 			"\n" +
-		"ctd:Node a json:object	;\n" +
+		"ctd:Node a json:Object	;\n" +
 "		json:key \"node\"^^xsd:string ;\n" +
 "		json:dataType iots:TimeSeries;\n" +
 "		json:value ctd:TempTimePair;\n" +
-"		json:children ctd:TimeStamp, ctd:TemperatureValue .";
+"		json:children ctd:TimeStamp, ctd:TemperatureValue . \n";
 		Model objectModel = stringToModel(objectRepresentationString);
-		Set<Value> resultSet = RDFModelUtil.getValuesForObject(objectModel);
-		IRI resultIri = SimpleValueFactory.getInstance().createIRI("http://connectd.api/TempTimePair");
-		assertEquals(1, resultSet.size());
-		assertTrue(resultSet.contains(resultIri));
+		Value resultValue= RDFModelUtil.getValueTypeForObject(objectModel);
+		assertEquals(JSON.OBJECT.stringValue(), resultValue.stringValue());
 	}
 
 	@Test
-	@Ignore
 	public void isLiteralShouldBeFalseForNonLiteralValues() throws IOException {
-		String modelRepresentationString = "@prefix ctd: <http://connectd.api/> .\n" +
-				"@prefix onto: <http://ontodm.com/OntoDT#> .\n" +
-				"@prefix iots: <http://iotschema.org/> .\n" +
-				"@prefix json: <http://some.json.ontology/> .\n" +
-				"@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n" +
-				"	ctd:Node a json:object	;\n" +
-				"		json:key \"node\"^^xsd:string ;\n" +
-				"		json:dataType iots:TimeSeries;\n" +
-				"		json:value ctd:TempTimePair;\n" +
-				"		json:children ctd:TimeStamp, ctd:TemperatureValue .\n" +
-				"\n" +
-				"	ctd:TempTimePair a json:object;\n" +
-				"		json:value ctd:TemperatureValue;\n" +
-				"		json:value ctd:TimeStamp . \n" +
-				"		\n" +
-				"	ctd:NodeArray a json:array ;\n" +
-				"		json:arrayType ctd:Node .\n" +
-				"\n" +
-				"	ctd:Edges a json:object	;\n" +
-				"		json:key \"edges\"^^xsd:string ;\n" +
-				"		json:value ctd:NodeArray .\n";
-		Model jsonModel = stringToModel(modelRepresentationString);
-		Value valueToCheck = SimpleValueFactory.getInstance().createIRI("http://connectd.api/TempTimePair");
+		Value valueToCheck = JSON.OBJECT;
 		assertFalse(RDFModelUtil.isLiteral(valueToCheck));
 	}
 
 	@Test
-	@Ignore
 	public void isLiteralShouldBeTrueForLiteralValues() throws IOException {
-		String modelRepresentationString = "@prefix ctd: <http://connectd.api/> .\n" +
-				"@prefix onto: <http://ontodm.com/OntoDT#> .\n" +
-				"@prefix iots: <http://iotschema.org/> .\n" +
-				"@prefix json: <http://some.json.ontology/> .\n" +
-				"@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n" +
-				"	ctd:TemperatureValue a json:object ;\n" +
-				"		json:key \"value\"^^xsd:string ;\n" +
-				"		json:dataType iots:TemperatureData ;\n" +
-				"		json:value json:literal;\n" +
-				"		json:parent ctd:Node .";
-		Model jsonModel = stringToModel(modelRepresentationString);
-		Value valueToCheck = SimpleValueFactory.getInstance().createIRI("http://connectd.api/TemperatureValue");
-		assertTrue(RDFModelUtil.isLiteral(valueToCheck));
-	}
-
-	@Test(expected = NoSuchElementException.class)
-	@Ignore
-	public void isLiteralShouldThrowExceptionWhenValueIsMissing() throws IOException {
-		String modelRepresentationString = "@prefix ctd: <http://connectd.api/> .\n" +
-				"@prefix onto: <http://ontodm.com/OntoDT#> .\n" +
-				"@prefix iots: <http://iotschema.org/> .\n" +
-				"@prefix json: <http://some.json.ontology/> .\n" +
-				"@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n" +
-				"	ctd:TemperatureValue a json:object ;\n" +
-				"		json:dataType iots:TemperatureData ;\n" +
-				"		json:parent ctd:Node .";
-		Model jsonModel = stringToModel(modelRepresentationString);
-		Value valueToCheck = SimpleValueFactory.getInstance().createIRI("http://connectd.api/TemperatureValue");
-		assertFalse(RDFModelUtil.isLiteral(valueToCheck));
+		assertTrue(RDFModelUtil.isLiteral(JSON.BOOLEAN));
+		assertTrue(RDFModelUtil.isLiteral(JSON.NUMBER));
+		assertTrue(RDFModelUtil.isLiteral(JSON.STRING));
 	}
 
 	@Test

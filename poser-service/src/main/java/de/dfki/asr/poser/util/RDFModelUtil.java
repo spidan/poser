@@ -67,14 +67,20 @@ public class RDFModelUtil {
 	}
 
 	/**
-	 * Get the values from the provided json object model
+	 * Get the resources from the provided json object model that will be represented as a literal,
+	 * and as such need to be retrieved from the semantic input
 	 * @param jsonObjectModel
-	 * @return A list of values
+	 * @return The list of values that need to be read from the semantic input data
 	 */
-	public static Set<Value> getValuesForObject(Model jsonObjectModel) {
-		ValueFactory vf = SimpleValueFactory.getInstance();
+	public static Value getValueTypeForObject(Model jsonObjectModel) {
 		Set<Value> valueModel = jsonObjectModel.filter(null, RDF.TYPE , null).objects();
-		return valueModel;
+		if (valueModel.isEmpty()) {
+			throw new NoSuchElementException("Object is missing a value definition");
+		}
+		if (valueModel.size() > 1) {
+			throw new DataTypeException("Multiple data types defined for object");
+		}
+		return valueModel.iterator().next();
 	}
 
 	/**
