@@ -111,4 +111,21 @@ public class RDFModelUtil {
 		}
 		return predicates.iterator().next().stringValue();
 	}
+
+	/**
+	 * Returns the type to be checked for in the input data set, depending on the description in the json object model
+	 * @param jsonObjectModel The model for the JSON object to be generated
+	 * @param jsonModel The model API description including the input data description
+	 * @return The type of the value to check for in the input data type description
+	 */
+	public static String getCorrespondingInputValueType(Model jsonObjectModel, Model jsonModel) {
+		ValueFactory vf = SimpleValueFactory.getInstance();
+		IRI dataTypePredicateIri = vf.createIRI("http://some.json.ontology/dataType");
+		Optional<IRI> apiDataType = Models.objectIRI(jsonObjectModel.filter(null, dataTypePredicateIri, null));
+		if(apiDataType.isEmpty()) {
+			throw new DataTypeException("No input data type found for a value");
+		}
+		IRI dataType = apiDataType.get();
+		return dataType.stringValue();
+	}
 }

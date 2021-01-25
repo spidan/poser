@@ -44,7 +44,7 @@ public class RdfToJson {
 		Set<Value> values = RDFModelUtil.getValuesForObject(jsonObjectModel);
 		for(Value value: values) {
 			if (RDFModelUtil.isLiteral(value)) {
-				addToResult(resultObject, jsonKey, value);
+				addToResult(resultObject, jsonKey, jsonObjectModel);
 			}
 			else
 			{
@@ -55,10 +55,10 @@ public class RdfToJson {
 		return resultObject;
 	}
 
-	private void addToResult(JSONObject resultObject, String jsonKey, Value value) {
-		String valueType = RDFModelUtil.getTypeOfValue(value, jsonModel);
+	private void addToResult(JSONObject resultObject, String jsonKey, Model jsonObjectModel) {
+		String valueType = RDFModelUtil.getCorrespondingInputValueType(jsonObjectModel, jsonModel);
 		String propertyName = RDFModelUtil.getPredicateNameForTypeFromModel(valueType, jsonModel);
 		String valueResult = InputDataReader.getValueForType(valueType, propertyName, inputModel);
-		resultObject.append(jsonKey, valueResult);
+		resultObject.put(jsonKey, valueResult);
 	}
 }
