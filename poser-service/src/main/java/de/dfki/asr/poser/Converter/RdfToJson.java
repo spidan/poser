@@ -55,7 +55,7 @@ public class RdfToJson {
 		return resultObject;
 	}
 
-	private void addToResult(JSONObject resultObject, String jsonKey, Object jsonValue) {
-		resultObject.accumulate(jsonKey, jsonValue);
+	private JSONObject addToResult(JSONObject resultObject, String jsonKey, Object jsonValue) {
+		return resultObject.put(jsonKey, jsonValue);
 	}
 }
