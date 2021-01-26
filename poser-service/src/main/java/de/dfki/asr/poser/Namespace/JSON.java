@@ -10,6 +10,8 @@ public class JSON {
 	public static final IRI STRING = getIri("String");
 	public static final IRI OBJECT = getIri("Object");
 	public static final IRI BOOLEAN = getIri("Boolean");
+	public static final IRI VALUE = getIri("value");
+	public static final IRI DATA_TYPE = getIri("dataType");
 
 	private static IRI getIri(String localName) {
 		return SimpleValueFactory.getInstance().createIRI(NAMESPACE, localName);
