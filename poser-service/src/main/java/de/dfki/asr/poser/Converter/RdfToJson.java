@@ -5,8 +5,6 @@ import de.dfki.asr.poser.util.InputDataReader;
 import de.dfki.asr.poser.util.RDFModelUtil;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Value;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.json.JSONObject;
 
 public class RdfToJson {
@@ -25,7 +23,6 @@ public class RdfToJson {
 		this.inputModel = inputModel;
 		this.jsonModel = jsonModel;
 
-		ValueFactory vf = SimpleValueFactory.getInstance();
 		inputModel.setNamespace("rdfs", "https://www.w3.org/TR/rdf-schema/");
 		inputModel.setNamespace("json", "http://some.json.ontology/");
 		JSONObject jsonResult = new JSONObject();
