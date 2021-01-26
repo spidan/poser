@@ -29,11 +29,12 @@ public class RdfToJson {
 		// check the RDF description of the JSON API model for the desired input type
 		String inputType = RDFModelUtil.getDesiredInputType(jsonModel);
 		// get the json object description that maps to this input type from the JSON model
-		jsonResult = buildJsonObjectFromDescriptionFile(inputType);
+		Model jsonObjectModel = RDFModelUtil.getModelForJsonObject(inputType, jsonModel);
+		jsonResult = buildJsonObjectFromModel(jsonObjectModel, jsonModel, jsonResult);
 		return jsonResult.toString();
 	}
 
-	private JSONObject buildJsonObjectFromDescriptionFile(String jsonType) {
+	private JSONObject buildJsonObjectFromModel(Model objectModel, Model jsonModel, JSONObject resultObject) {
 		Model jsonObjectModel = RDFModelUtil.getModelForJsonObject(jsonType, jsonModel);
 		JSONObject resultObject = new JSONObject();
 		String jsonKey = RDFModelUtil.getKeyForObject(jsonObjectModel);
