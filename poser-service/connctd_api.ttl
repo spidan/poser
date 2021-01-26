@@ -3,6 +3,7 @@
 @prefix iots: <http://iotschema.org/> .
 @prefix json: <http://some.json.ontology/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix time: <https://www.w3.org/TR/2020/CR-owl-time-20200326/> .
 
 # Which inputs to expect and to start mapping from
 json:InputDataType {
@@ -11,6 +12,7 @@ json:InputDataType {
 		iots:providesTimeData iots:TimeData .
 
 	iots:TemperatureData iots:numberDataType iots:Number .
+	iots:TimeData  time:dateTime iots:Number .
 }
 
 #Semantic description of the json objects to be found in the expected API

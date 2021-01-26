@@ -1,12 +1,12 @@
 package de.dfki.asr.poser.Converter;
 
 import de.dfki.asr.poser.Namespace.JSON;
+import de.dfki.asr.poser.exceptions.DataTypeException;
 import de.dfki.asr.poser.util.InputDataReader;
 import de.dfki.asr.poser.util.RDFModelUtil;
+import java.util.Set;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Value;
-import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.json.JSONObject;
 
 public class RdfToJson {
@@ -25,39 +25,50 @@ public class RdfToJson {
 		this.inputModel = inputModel;
 		this.jsonModel = jsonModel;
 
-		ValueFactory vf = SimpleValueFactory.getInstance();
 		inputModel.setNamespace("rdfs", "https://www.w3.org/TR/rdf-schema/");
 		inputModel.setNamespace("json", "http://some.json.ontology/");
 		JSONObject jsonResult = new JSONObject();
 		// check the RDF description of the JSON API model for the desired input type
 		String inputType = RDFModelUtil.getDesiredInputType(jsonModel);
 		// get the json object description that maps to this input type from the JSON model
-		jsonResult = buildJsonObjectFromDescriptionFile(inputType, jsonModel);
+		Model jsonObjectModel = RDFModelUtil.getModelForJsonObject(inputType, jsonModel);
+		jsonResult = buildJsonObjectFromModel(jsonObjectModel, jsonModel, jsonResult);
 		return jsonResult.toString();
 	}
 
-	private JSONObject buildJsonObjectFromDescriptionFile(String jsonType, Model jsonModel) {
-		Model jsonObjectModel = RDFModelUtil.getModelForJsonObject(jsonType, jsonModel);
-		JSONObject resultObject = new JSONObject();
-		String jsonKey = RDFModelUtil.getKeyForObject(jsonObjectModel);
-		Value jsonDataType = RDFModelUtil.getValueTypeForObject(jsonObjectModel);
-		if (RDFModelUtil.isLiteral(jsonDataType)) {
-			String valueType = RDFModelUtil.getCorrespondingInputValueType(jsonObjectModel, jsonModel);
+	private JSONObject buildJsonObjectFromModel(Model objectModel, Model jsonModel, JSONObject resultObject) {
+		String jsonKey = RDFModelUtil.getKeyForObject(objectModel);
+		Value jsonDataType = RDFModelUtil.getValueTypeForObject(objectModel);
+		if (!RDFModelUtil.isLiteral(jsonDataType)) {
+			JSONObject childJSON = new JSONObject();
+			Set<Value> childValues = objectModel.filter(null, JSON.VALUE, null).objects();
+			if(childValues.isEmpty()) {
+				throw new DataTypeException("No value found for key " + jsonKey);
+			}
+			for(Value child: childValues) {
+				Model childObjectModel = RDFModelUtil.getModelForResource(child, jsonModel);
+				childJSON = buildJsonObjectFromModel(childObjectModel, jsonModel, childJSON);
+			}
+			return resultObject.put(jsonKey, childJSON);
+		}
+		else {
+			String valueType = RDFModelUtil.getCorrespondingInputValueType(objectModel, jsonModel);
 			String propertyName = RDFModelUtil.getPredicateNameForTypeFromModel(valueType, jsonModel);
 			String valueResult = InputDataReader.getValueForType(valueType, propertyName, inputModel);
 			if (JSON.NUMBER.equals(jsonDataType)) {
-				addToResult(resultObject, jsonKey, Double.parseDouble(valueResult));
+				return addToResult(resultObject, jsonKey, Double.parseDouble(valueResult));
 			}
 			else if (JSON.BOOLEAN.equals(jsonDataType)) {
 				Boolean resultValue = ("1".equals(valueResult) || "true".equalsIgnoreCase(valueResult));
-				addToResult(resultObject, jsonKey, resultValue);
+				return addToResult(resultObject, jsonKey, resultValue);
 			}
-			else addToResult(resultObject, jsonKey, valueResult);
+			else {
+				return addToResult(resultObject, jsonKey, valueResult);
+			}
 		}
-		return resultObject;
 	}
 
-	private void addToResult(JSONObject resultObject, String jsonKey, Object jsonValue) {
-		resultObject.accumulate(jsonKey, jsonValue);
+	private JSONObject addToResult(JSONObject resultObject, String jsonKey, Object jsonValue) {
+		return resultObject.put(jsonKey, jsonValue);
 	}
 }

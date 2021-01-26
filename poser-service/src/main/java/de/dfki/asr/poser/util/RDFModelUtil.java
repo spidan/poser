@@ -17,6 +17,7 @@ import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.util.Models;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.json.JSONObject;
 
 public class RDFModelUtil {
 
@@ -139,6 +140,18 @@ public class RDFModelUtil {
 		return dataType.stringValue();
 	}
 
+	/**
+	 *
+	 * @param resource The resource for which to get the model
+	 * @param jsonModel The model of the json payload from which to retrieve the information
+	 * @return A model representing a single resource, e.g. a single JSON element
+	 */
+	public static Model getModelForResource(Value resource, Model jsonModel) {
+		IRI resourceIRI = SimpleValueFactory.getInstance().createIRI(resource.stringValue());
+		Model childObjectModel = jsonModel.filter(resourceIRI, null, null);
+		return childObjectModel;
+	}
+
 	private static Set<IRI> getLiteralJsonTypes() {
 		Set<IRI> literalTypes = new HashSet<>();
 		literalTypes.add(JSON.NUMBER);
@@ -146,4 +159,4 @@ public class RDFModelUtil {
 		literalTypes.add(JSON.BOOLEAN);
 		return literalTypes;
 	}
-}
+	}
