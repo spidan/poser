@@ -30,11 +30,11 @@ json:ApiDescription {
 
 	ctd:Node a json:Object;
 		json:key "node"^^xsd:string ;
-		json:dataType iots:TimeSeries;
 		json:value ctd:TimeStamp, ctd:TemperatureValue ;
 		json:parent ctd:Edges .
 
 	ctd:Edges a json:Array	;
 		json:key "edges"^^xsd:string ;
+		json:dataType iots:TimeSeries;
 		json:value ctd:Node .
 }
