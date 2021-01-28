@@ -26,8 +26,8 @@ public class RdfToJsonConverterTest {
 
 	@Test
 	public void converterShouldReturnFittingHierarchyForInputWithNonLiteralParent () throws IOException {
-		Model jsonModel = buildFullExampleModelFile();
-		Model inputModel = buildInputExample();
+		Model jsonModel = readModelFromFile("jsonApiSingleValue.ttl");
+		Model inputModel = readModelFromFile("liftedExampleSingleValue.ttl");
 		RdfToJson conv = new RdfToJson();
 		String out = conv.buildJsonString(inputModel, jsonModel);
 		JSONObject expectedNodeObject = new JSONObject();
@@ -40,8 +40,8 @@ public class RdfToJsonConverterTest {
 
 	@Test
 	public void converterShouldAccumulateValuesForLargeInputs () throws IOException {
-		Model jsonModel = buildFullExampleModelFile();
-		Model inputModel = buildMultipleInputExample();
+		Model jsonModel = readModelFromFile("jsonApiMultipleValues.ttl");
+		Model inputModel = readModelFromFile("liftedExampleMultipleValues.ttl");
 		RdfToJson conv = new RdfToJson();
 		String out = conv.buildJsonString(inputModel, jsonModel);
 		JSONObject expectedNodeObject = new JSONObject();
@@ -86,9 +86,9 @@ public class RdfToJsonConverterTest {
 		return jsonModel;
 	}
 
-	private Model buildFullExampleModelFile() throws IOException {
+	private Model readModelFromFile(String filename) throws IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
-		InputStream modelStream = classLoader.getResource("jsonApiSingleValue.ttl").openStream();
+		InputStream modelStream = classLoader.getResourceAsStream(filename);
 		Model jsonModel = Rio.parse(modelStream, RDFFormat.TRIG);
 		return jsonModel;
 	}
