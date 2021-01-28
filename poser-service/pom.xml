@@ -64,6 +64,18 @@
 		    <scope>test</scope>
 		    <type>jar</type>
 		  </dependency>
+		  <dependency>
+		    <groupId>org.eclipse.rdf4j</groupId>
+		    <artifactId>rdf4j-repository-sail</artifactId>
+		    <version>3.2.0-M2</version>
+		    <type>jar</type>
+		  </dependency>
+		  <dependency>
+		    <groupId>org.eclipse.rdf4j</groupId>
+		    <artifactId>rdf4j-sail-memory</artifactId>
+		    <version>3.2.0-M2</version>
+		    <type>jar</type>
+		  </dependency>
 		</dependencies>
 
 	<build>

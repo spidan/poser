@@ -1,0 +1,11 @@
+<http://sense.mapping.example/measurement/2021-01-10T19%3a58%3a49.294909Z> a <http://iotschema.org/TimeSeries>;
+  <http://iotschema.org/providesTemperatureData> <http://sense.mapping.example/measurement/Value2021-01-10T19%3a58%3a49.294909Z>;
+  <http://iotschema.org/providesTimeData> <http://sense.mapping.example/measurement/Timestamp2021-01-10T19%3a58%3a49.294909Z> .
+
+<http://sense.mapping.example/measurement/Value2021-01-10T19%3a58%3a49.294909Z> a
+    <http://iotschema.org/TemperatureData>;
+  <http://iotschema.org/numberDataType> "506.54" .
+
+<http://sense.mapping.example/measurement/Timestamp2021-01-10T19%3a58%3a49.294909Z>
+  a <http://iotschema.org/TimeData>;
+  <https://www.w3.org/TR/2020/CR-owl-time-20200326/dateTime> "2021-01-10T19:58:49.294909Z" .

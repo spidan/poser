@@ -6,6 +6,7 @@ import de.dfki.asr.poser.util.InputDataReader;
 import de.dfki.asr.poser.util.RDFModelUtil;
 import java.util.Set;
 import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Value;
 import org.json.JSONObject;
 
@@ -13,6 +14,7 @@ public class RdfToJson {
 
 	private Model inputModel;
 	private Model jsonModel;
+	private Model inputDataTypes;
 	/**
 	 * Receives data in ttl format, finds the corresponding json objects to be generated
 	 * in the semantic description of the target payload and generates the necessary objects
@@ -25,6 +27,7 @@ public class RdfToJson {
 		this.inputModel = inputModel;
 		this.jsonModel = jsonModel;
 
+		inputDataTypes = jsonModel.filter(null, null, null, JSON.INPUT_DATA_TYPE);
 		inputModel.setNamespace("rdfs", "https://www.w3.org/TR/rdf-schema/");
 		inputModel.setNamespace("json", "http://some.json.ontology/");
 		JSONObject jsonResult = new JSONObject();
@@ -32,24 +35,52 @@ public class RdfToJson {
 		String inputType = RDFModelUtil.getDesiredInputType(jsonModel);
 		// get the json object description that maps to this input type from the JSON model
 		Model jsonObjectModel = RDFModelUtil.getModelForJsonObject(inputType, jsonModel);
-		jsonResult = buildJsonObjectFromModel(jsonObjectModel, jsonModel, jsonResult);
+		jsonResult = buildJsonObjectFromModel(jsonObjectModel, inputModel, jsonResult);
 		return jsonResult.toString();
 	}
 
-	private JSONObject buildJsonObjectFromModel(Model objectModel, Model jsonModel, JSONObject resultObject) {
+	private JSONObject buildJsonObjectFromModel(Model objectModel, Model inputModel, JSONObject resultObject) {
 		String jsonKey = RDFModelUtil.getKeyForObject(objectModel);
 		Value jsonDataType = RDFModelUtil.getValueTypeForObject(objectModel);
 		if (!RDFModelUtil.isLiteral(jsonDataType)) {
-			JSONObject childJSON = new JSONObject();
 			Set<Value> childValues = objectModel.filter(null, JSON.VALUE, null).objects();
 			if(childValues.isEmpty()) {
 				throw new DataTypeException("No value found for key " + jsonKey);
 			}
+			//if this object maps to a input data type, make sure to generate an object for each corresponding value set
+			if(objectModel.predicates().contains(JSON.DATA_TYPE)) {
+				String valueType = RDFModelUtil.getCorrespondingInputValueType(objectModel, jsonModel);
+				Model dataTypeModel = InputDataReader.getModelForType(valueType, inputModel);
+				for(Resource subj: dataTypeModel.subjects()) {
+					Model subInputModel = InputDataReader.getSubInputModel(subj, inputModel);
+					JSONObject childJSON = new JSONObject();
+					for(Value child: childValues) {
+						Model childObjectModel = RDFModelUtil.getModelForResource(child, jsonModel);
+						childJSON = buildJsonObjectFromModel(childObjectModel, subInputModel, childJSON);						
+						if (JSON.OBJECT.equals(jsonDataType)) {
+							resultObject.put(jsonKey, childJSON);
+						} else if (JSON.ARRAY.equals(jsonDataType)) {
+							resultObject.append(jsonKey, childJSON);
+						} else {
+							throw new DataTypeException("Could not determine JSON collection type");
+						}
+					}
+				}
+				return resultObject;
+			}
+			JSONObject childJSON = new JSONObject();
 			for(Value child: childValues) {
 				Model childObjectModel = RDFModelUtil.getModelForResource(child, jsonModel);
-				childJSON = buildJsonObjectFromModel(childObjectModel, jsonModel, childJSON);
+				childJSON = buildJsonObjectFromModel(childObjectModel, inputModel, childJSON);
+				if (JSON.OBJECT.equals(jsonDataType)) {
+					resultObject.put(jsonKey, childJSON);
+				} else if (JSON.ARRAY.equals(jsonDataType)) {
+					resultObject.append(jsonKey, childJSON);
+				} else {
+					throw new DataTypeException("Could not determine JSON collection type");
+				}
 			}
-			return resultObject.put(jsonKey, childJSON);
+			return resultObject;
 		}
 		else {
 			String valueType = RDFModelUtil.getCorrespondingInputValueType(objectModel, jsonModel);

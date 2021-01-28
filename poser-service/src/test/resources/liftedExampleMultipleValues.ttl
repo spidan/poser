@@ -1,0 +1,36 @@
+
+<http://sense.mapping.example/measurement/2021-01-10T19%3a58%3a49.294909Z> a <http://iotschema.org/TimeSeries>;
+  <http://iotschema.org/providesTemperatureData> <http://sense.mapping.example/measurement/Value2021-01-10T19%3a58%3a49.294909Z>;
+  <http://iotschema.org/providesTimeData> <http://sense.mapping.example/measurement/Timestamp2021-01-10T19%3a58%3a49.294909Z> .
+
+<http://sense.mapping.example/measurement/2021-01-10T19%3a59%3a24.220966Z> a <http://iotschema.org/TimeSeries>;
+  <http://iotschema.org/providesTemperatureData> <http://sense.mapping.example/measurement/Value2021-01-10T19%3a59%3a24.220966Z>;
+  <http://iotschema.org/providesTimeData> <http://sense.mapping.example/measurement/Timestamp2021-01-10T19%3a59%3a24.220966Z> .
+
+<http://sense.mapping.example/measurement/2021-01-11T19%3a46%3a14.338753Z> a <http://iotschema.org/TimeSeries>;
+  <http://iotschema.org/providesTemperatureData> <http://sense.mapping.example/measurement/Value2021-01-11T19%3a46%3a14.338753Z>;
+  <http://iotschema.org/providesTimeData> <http://sense.mapping.example/measurement/Timestamp2021-01-11T19%3a46%3a14.338753Z> .
+
+<http://sense.mapping.example/measurement/Timestamp2021-01-10T19%3a58%3a49.294909Z>
+  a <http://iotschema.org/TimeData>;
+  <https://www.w3.org/TR/2020/CR-owl-time-20200326/dateTime> "2021-01-10T19:58:49.294909Z" .
+
+<http://sense.mapping.example/measurement/Timestamp2021-01-10T19%3a59%3a24.220966Z>
+  a <http://iotschema.org/TimeData>;
+  <https://www.w3.org/TR/2020/CR-owl-time-20200326/dateTime> "2021-01-10T19:59:24.220966Z" .
+
+<http://sense.mapping.example/measurement/Timestamp2021-01-11T19%3a46%3a14.338753Z>
+  a <http://iotschema.org/TimeData>;
+  <https://www.w3.org/TR/2020/CR-owl-time-20200326/dateTime> "2021-01-11T19:46:14.338753Z" .
+
+<http://sense.mapping.example/measurement/Value2021-01-10T19%3a58%3a49.294909Z> a
+    <http://iotschema.org/TemperatureData>;
+  <http://iotschema.org/numberDataType> "506.54" .
+
+<http://sense.mapping.example/measurement/Value2021-01-10T19%3a59%3a24.220966Z> a
+    <http://iotschema.org/TemperatureData>;
+  <http://iotschema.org/numberDataType> "126.38" .
+
+<http://sense.mapping.example/measurement/Value2021-01-11T19%3a46%3a14.338753Z> a
+    <http://iotschema.org/TemperatureData>;
+  <http://iotschema.org/numberDataType> "1.5" .
