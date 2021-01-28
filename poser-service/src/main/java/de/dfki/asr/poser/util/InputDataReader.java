@@ -13,6 +13,11 @@ import org.eclipse.rdf4j.model.vocabulary.RDF;
 
 public class InputDataReader {
 
+	public static Model getModelForType(String dataType, Model data) {
+		IRI dataTypeIri = SimpleValueFactory.getInstance().createIRI(dataType);
+		return data.filter(null, RDF.TYPE, dataTypeIri);
+	}
+
 	public static String getValueForType(String dataType, String propertyName, Model data) {
 		IRI dataTypeIri = SimpleValueFactory.getInstance().createIRI(dataType);
 		IRI propertyNameIri = SimpleValueFactory.getInstance().createIRI(propertyName);
