@@ -1,8 +1,10 @@
 package de.dfki.asr.poser.Converter;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import org.apache.commons.io.FileUtils;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
@@ -44,12 +46,8 @@ public class RdfToJsonConverterTest {
 		Model inputModel = readModelFromFile("liftedExampleMultipleValues.ttl");
 		RdfToJson conv = new RdfToJson();
 		String out = conv.buildJsonString(inputModel, jsonModel);
-		JSONObject expectedNodeObject = new JSONObject();
-		expectedNodeObject.put("value", 506.54);
-		expectedNodeObject.put("timestamp", "2021-01-10T19:58:49.294909Z");
-		JSONObject expectedResult = new JSONObject();
-		expectedResult.put("node", expectedNodeObject);
-		assertEquals(expectedResult.toString(), out);
+		String expectedResult =  readFileToString("multipleValuesExpectedResult.json");
+		assertEquals(expectedResult, out);
 	}
 
 	private Model buildLiteralInput() throws IOException {
@@ -93,17 +91,10 @@ public class RdfToJsonConverterTest {
 		return jsonModel;
 	}
 
-	private Model buildInputExample() throws IOException {
+	private String readFileToString(String filename) throws IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
-		InputStream modelStream = classLoader.getResource("liftedExampleSingleValue.ttl").openStream();
-		Model jsonModel = Rio.parse(modelStream, RDFFormat.TRIG);
-		return jsonModel;
-	}
-
-	private Model buildMultipleInputExample() throws IOException {
-		ClassLoader classLoader = getClass().getClassLoader();
-		InputStream modelStream = classLoader.getResource("liftedExampleMultipleValues.ttl").openStream();
-		Model jsonModel = Rio.parse(modelStream, RDFFormat.TRIG);
-		return jsonModel;
+		File inputFile = new File(classLoader.getResource(filename).getFile());
+		String result = FileUtils.readFileToString(inputFile, "UTF-8");
+		return result;
 	}
 }
