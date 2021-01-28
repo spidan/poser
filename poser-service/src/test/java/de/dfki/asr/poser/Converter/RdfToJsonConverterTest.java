@@ -46,8 +46,8 @@ public class RdfToJsonConverterTest {
 		Model inputModel = readModelFromFile("liftedExampleMultipleValues.ttl");
 		RdfToJson conv = new RdfToJson();
 		String out = conv.buildJsonString(inputModel, jsonModel);
-		String expectedResult =  readFileToString("multipleValuesExpectedResult.json");
-		assertEquals(expectedResult, out);
+		JSONObject expectedResult = new JSONObject(readFileToString("multipleValuesExpectedResult.json"));
+		assertEquals(expectedResult.toString(), out);
 	}
 
 	private Model buildLiteralInput() throws IOException {
