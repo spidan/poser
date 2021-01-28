@@ -38,6 +38,20 @@ public class RdfToJsonConverterTest {
 		assertEquals(expectedResult.toString(), out);
 	}
 
+	@Test
+	public void converterShouldAccumulateValuesForLargeInputs () throws IOException {
+		Model jsonModel = buildFullExampleModelFile();
+		Model inputModel = buildMultipleInputExample();
+		RdfToJson conv = new RdfToJson();
+		String out = conv.buildJsonString(inputModel, jsonModel);
+		JSONObject expectedNodeObject = new JSONObject();
+		expectedNodeObject.put("value", 506.54);
+		expectedNodeObject.put("timestamp", "2021-01-10T19:58:49.294909Z");
+		JSONObject expectedResult = new JSONObject();
+		expectedResult.put("node", expectedNodeObject);
+		assertEquals(expectedResult.toString(), out);
+	}
+
 	private Model buildLiteralInput() throws IOException {
 		String inputString = "<http://sense.mapping.example/measurement/Value2021-01-10T19%3a59%3a24.220966Z> a\n" +
 			"    <http://iotschema.org/TestData> ; \n" +
