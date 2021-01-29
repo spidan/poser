@@ -27,7 +27,7 @@ public class RdfToJsonConverterTest {
 	}
 
 	@Test
-	public void converterShouldReturnFittingHierarchyForInputWithNonLiteralParent () throws IOException {
+	public void converterShouldReturnFittingHierarchyForInputWithNonLiteralParent () throws IOException, JSONException {
 		Model jsonModel = readModelFromFile("jsonApiSingleValue.ttl");
 		Model inputModel = readModelFromFile("liftedExampleSingleValue.ttl");
 		RdfToJson conv = new RdfToJson();
@@ -41,7 +41,7 @@ public class RdfToJsonConverterTest {
 	}
 
 	@Test
-	public void converterShouldAccumulateValuesForLargeInputs () throws IOException {
+	public void converterShouldAccumulateValuesForLargeInputs () throws IOException, JSONException {
 		Model jsonModel = readModelFromFile("jsonApiMultipleValues.ttl");
 		Model inputModel = readModelFromFile("liftedExampleMultipleValues.ttl");
 		RdfToJson conv = new RdfToJson();
