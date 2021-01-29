@@ -46,12 +46,6 @@
 			<type>pom</type>
 		</dependency>
 		  <dependency>
-		    <groupId>org.json</groupId>
-		    <artifactId>json</artifactId>
-		    <version>20190722</version>
-		    <type>jar</type>
-		  </dependency>
-		  <dependency>
 		    <groupId>org.eclipse.rdf4j</groupId>
 		    <artifactId>rdf4j-model</artifactId>
 		    <version>3.5.0</version>
