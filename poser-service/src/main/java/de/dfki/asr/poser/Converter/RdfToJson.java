@@ -49,8 +49,8 @@ public class RdfToJson {
 					for(Value child: childValues) {
 						Model childObjectModel = RDFModelUtil.getModelForResource(child, jsonModel);
 						childJSON = buildJsonObjectFromModel(childObjectModel, subInputModel, childJSON);
-						addToParentObject(jsonDataType, resultObject, jsonKey, childJSON);
 					}
+					addToParentObject(jsonDataType, resultObject, jsonKey, childJSON);
 				}
 				return resultObject;
 			}
