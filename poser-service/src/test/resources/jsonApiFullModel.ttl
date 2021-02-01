@@ -18,6 +18,9 @@ json:InputDataType {
 #Semantic description of the json objects to be found in the expected API
 
 json:ApiDescription {
+
+	ctd:JsonModel json:hasRoot ctd:Data .
+
 	ctd:TemperatureValue a json:Number ;
 		json:key "value"^^xsd:string ;
 		json:dataType iots:TemperatureData ;
@@ -52,7 +55,6 @@ json:ApiDescription {
 		json:value ctd:Components .
 
 	ctd:Data a json:Object ;
-		a json:Root ;
 		json:key "data" ;
 		json:value ctd:Things .
 }
