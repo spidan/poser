@@ -29,10 +29,8 @@ public class RdfToJson {
 		inputModel.setNamespace("json", "http://some.json.ontology/");
 		JSONObject jsonResult = new JSONObject();
 		// check the RDF description of the JSON API model for the desired input type
-		String inputType = RDFModelUtil.getDesiredInputType(jsonModel);
-		// get the json object description that maps to this input type from the JSON model
-		Model jsonObjectModel = RDFModelUtil.getModelForJsonObject(inputType, jsonModel);
-		jsonResult = buildJsonObjectFromModel(jsonObjectModel, inputModel, jsonResult);
+		Model rootObject = RDFModelUtil.getRootObject(jsonModel);
+		jsonResult = buildJsonObjectFromModel(rootObject, inputModel, jsonResult);
 		return jsonResult.toString();
 	}
 
