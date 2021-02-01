@@ -21,12 +21,10 @@ json:ApiDescription {
 	ctd:TemperatureValue a json:Number ;
 		json:key "value"^^xsd:string ;
 		json:dataType iots:TemperatureData ;
-		json:parent ctd:Node .
 
 	ctd:TimeStamp a json:String ;
 		json:key "timestamp"^^xsd:string ;
 		json:dataType iots:TimeData ;
-		json:parent ctd:Node .
 
 	ctd:Node a json:Object;
 		json:key "node"^^xsd:string ;
