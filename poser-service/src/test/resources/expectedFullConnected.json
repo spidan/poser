@@ -1,0 +1,37 @@
+{
+    "data": {
+        "things": [
+            {
+                "components": [
+                    {
+                        "properties": [
+                            {
+                                "history": {
+                                    "edges": [
+                                        {
+                                            "node": {
+                                                "value": 506.54,
+                                                "timestamp": "2021-01-10T19:58:49.294909Z"
+                                            }
+                                        },
+                                        {
+                                            "node": {
+                                                "value": 126.38,
+                                                "timestamp": "2021-01-10T19:59:24.220966Z"
+                                            }
+                                        },                                        {
+                                            "node": {
+                                                "value": 1.5,
+                                                "timestamp": "2021-01-11T19:46:14.338753Z"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}
