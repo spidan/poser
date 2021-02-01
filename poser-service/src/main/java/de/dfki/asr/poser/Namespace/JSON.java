@@ -14,6 +14,7 @@ public class JSON {
 	public static final IRI VALUE = getIri("value");
 	public static final IRI DATA_TYPE = getIri("dataType");
 	public static final IRI INPUT_DATA_TYPE = getIri("InputDataType");
+	public static final IRI ROOT = getIri("hasRoot");
 
 	private static IRI getIri(String localName) {
 		return SimpleValueFactory.getInstance().createIRI(NAMESPACE, localName);
