@@ -1,0 +1,38 @@
+@prefix fhdo: <http://fhdo.api/> .
+@prefix onto: <http://ontodm.com/OntoDT#> .
+@prefix iots: <http://iotschema.org/> .
+@prefix json: <http://some.json.ontology/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix time: <https://www.w3.org/TR/2020/CR-owl-time-20200326/> .
+
+# Which inputs to expect and to start mapping from
+json:InputDataType {
+	json:EntryPoint a iots:TimeSeries;
+		iots:providesTemperatureData iots:TemperatureData;
+		iots:providesTimeData iots:TimeData .
+
+	iots:TemperatureData iots:numberDataType iots:Number .
+	iots:TimeData  time:dateTime iots:Number .
+}
+
+json:ApiDescription {
+
+	fhdo:JsonModel json:hasRoot fhdo:Samples .
+
+	fhdo:TemperatureValue a json:Number ;
+		json:key "value"^^xsd:string ;
+		json:dataType iots:TemperatureData .
+
+	fhdo:TimeStamp a json:String ;
+		json:key "time"^^xsd:string ;
+		json:dataType iots:TimeData .
+
+	fhdo:Status a json:String ;
+		json:key "status"^^xsd:string ;
+		json:dataType iots:TemperatureData .
+
+	fhdo:Samples a json:Array ;
+		json:key "samples"^^xsd:string ;
+		json:dataType iots:TimeSeries ;
+		json:value fhdo:TimeStamp, fhdo:TemperatureValue, fhdo:Status .
+}
