@@ -1,0 +1,61 @@
+@prefix ctd: <http://connectd.api/> .
+@prefix onto: <http://ontodm.com/OntoDT#> .
+@prefix iots: <http://iotschema.org/> .
+@prefix json: <http://some.json.ontology/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix time: <https://www.w3.org/TR/2020/CR-owl-time-20200326/> .
+
+# Which inputs to expect and to start mapping from
+json:InputDataType {
+	json:EntryPoint a iots:TimeSeries;
+		iots:providesTemperatureData iots:TemperatureData;
+		iots:providesTimeData iots:TimeData .
+
+	iots:TemperatureData iots:numberDataType iots:Number .
+	iots:TimeData  time:dateTime iots:Number .
+}
+
+#Semantic description of the json objects to be found in the expected API
+
+json:ApiDescription {
+	ctd:TemperatureValue a json:Number ;
+		json:key "value"^^xsd:string ;
+		json:dataType iots:TemperatureData ;
+		json:parent ctd:Node .
+
+	ctd:TimeStamp a json:String ;
+		json:key "timestamp"^^xsd:string ;
+		json:dataType iots:TimeData ;
+		json:parent ctd:Node .
+
+	ctd:Node a json:Object;
+		json:key "node"^^xsd:string ;
+		json:value ctd:TimeStamp, ctd:TemperatureValue ;
+		json:parent ctd:Edges .
+
+	ctd:Edges a json:Array	;
+		json:key "edges"^^xsd:string ;
+		json:dataType iots:TimeSeries;
+		json:value ctd:Node .
+
+	ctd:History a json:Object ;
+		json:key "history"^^xsd:string;
+		json:value ctd:Edges .
+
+	ctd:Properties a json:Array ;
+		json:key "properties" ;
+		json:value ctd:History .
+
+	ctd:Components a json:Array ;
+		json:key "components" ;
+		json:value ctd:Properties .
+
+	ctd:Things a json:Array ;
+		json:key "things";
+		json:value ctd:Components .
+
+	ctd:Data a json:Object ;
+		a json:Root ;
+		json:key "data" ;
+		json:value ctd:Things .
+}
