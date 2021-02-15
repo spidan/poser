@@ -6,16 +6,14 @@ import java.util.Set;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Literal;
 import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.model.Namespace;
 import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.impl.DynamicModelFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.util.Models;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
-import org.eclipse.rdf4j.query.QueryResults;
-import org.eclipse.rdf4j.repository.Repository;
-import org.eclipse.rdf4j.repository.RepositoryConnection;
-import org.eclipse.rdf4j.repository.sail.SailRepository;
-import org.eclipse.rdf4j.repository.util.Repositories;
-import org.eclipse.rdf4j.sail.memory.MemoryStore;
 
 
 public class InputDataReader {
@@ -42,20 +40,28 @@ public class InputDataReader {
 	}
 
 	public static Model getSubInputModel(Resource subj, Model inputModel) {
-		Repository repo = new SailRepository(new MemoryStore());
-		String queryString = getSubgraphQueryString(subj);
-		try (RepositoryConnection conn =  repo.getConnection()) {
-			conn.add(inputModel);
+		DynamicModelFactory mf = new DynamicModelFactory();
+		Model resultModel = mf.createEmptyModel();
+		for(Namespace ns: inputModel.getNamespaces()) {
+			resultModel.setNamespace(ns);
 		}
-		Model triplesWithSubject = Repositories.graphQuery(repo, queryString, r -> QueryResults.asModel(r) );
-		return triplesWithSubject;
+		resultModel = accumulateTriplesFromSubject(subj, inputModel, resultModel);
+		return resultModel;
 	}
 
-	private static String getSubgraphQueryString(Resource subj) {
-		String subjectResource = subj.stringValue();
-		String queryString = "PREFIX x: <http://pre.fix/> \n"
-				+ "CONSTRUCT { ?s ?p ?o }\n" +
-		"where { <"+ subjectResource +"> (x:|!x:)* ?s . ?s ?p ?o . }";
-		return queryString;
+	private static Model accumulateTriplesFromSubject(Resource subj, Model inputModel, Model resultModel) {
+		Model subModel = inputModel.filter(subj, null, null);
+		for(Statement st: subModel) {
+			resultModel.add(st);
+		}
+		if (subModel.objects().isEmpty()) {
+			return resultModel;
+		}
+		for (Value obj: subModel.objects()) {
+			if(!obj.isLiteral()) {
+				resultModel = accumulateTriplesFromSubject((Resource) obj, inputModel, resultModel);
+			}
+		}
+		return resultModel;
 	}
 }

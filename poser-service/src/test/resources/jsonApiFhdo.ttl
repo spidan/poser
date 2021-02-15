@@ -1,4 +1,4 @@
-@prefix ctd: <http://connectd.api/> .
+@prefix fhdo: <http://fhdo.api/> .
 @prefix onto: <http://ontodm.com/OntoDT#> .
 @prefix iots: <http://iotschema.org/> .
 @prefix json: <http://some.json.ontology/> .
@@ -15,26 +15,24 @@ json:InputDataType {
 	iots:TimeData  time:dateTime iots:Number .
 }
 
-#Semantic description of the json objects to be found in the expected API
-
 json:ApiDescription {
-	ctd:JsonModel json:hasRoot ctd:Edges .
 
-	ctd:TemperatureValue a json:Number ;
+	fhdo:JsonModel json:hasRoot fhdo:Samples .
+
+	fhdo:TemperatureValue a json:Number ;
 		json:key "value"^^xsd:string ;
 		json:dataType iots:TemperatureData .
 
-	ctd:TimeStamp a json:String ;
-		json:key "timestamp"^^xsd:string ;
+	fhdo:TimeStamp a json:String ;
+		json:key "time"^^xsd:string ;
 		json:dataType iots:TimeData .
 
-	ctd:Node a json:Object;
-		json:key "node"^^xsd:string ;
-		json:value ctd:TimeStamp, ctd:TemperatureValue ;
-		json:parent ctd:Edges .
+	fhdo:Status a json:String ;
+		json:key "status"^^xsd:string ;
+		json:dataType iots:TemperatureData .
 
-	ctd:Edges a json:Array	;
-		json:key "edges"^^xsd:string ;
-		json:dataType iots:TimeSeries;
-		json:value ctd:Node .
+	fhdo:Samples a json:Array ;
+		json:key "samples"^^xsd:string ;
+		json:dataType iots:TimeSeries ;
+		json:value fhdo:TimeStamp, fhdo:TemperatureValue, fhdo:Status .
 }

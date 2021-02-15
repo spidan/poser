@@ -159,4 +159,13 @@ public class RDFModelUtil {
 		literalTypes.add(JSON.BOOLEAN);
 		return literalTypes;
 	}
+
+	public static Model getRootObject(Model jsonModel) {
+		Optional<IRI> subjOfRoot = Models.objectIRI(jsonModel.filter(null, JSON.ROOT, null));
+		if(subjOfRoot.isEmpty()) {
+			throw new NoSuchElementException("No root element found for JSON model");
+		}
+		Model rootObject = jsonModel.filter(subjOfRoot.get(), null, null);
+		return rootObject;
 	}
+}

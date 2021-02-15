@@ -27,7 +27,7 @@ public class RdfToJsonConverterTest {
 	}
 
 	@Test
-	public void converterShouldReturnFittingHierarchyForInputWithNonLiteralParent () throws IOException {
+	public void converterShouldReturnFittingHierarchyForInputWithNonLiteralParent () throws IOException, JSONException {
 		Model jsonModel = readModelFromFile("jsonApiSingleValue.ttl");
 		Model inputModel = readModelFromFile("liftedExampleSingleValue.ttl");
 		RdfToJson conv = new RdfToJson();
@@ -41,12 +41,22 @@ public class RdfToJsonConverterTest {
 	}
 
 	@Test
-	public void converterShouldAccumulateValuesForLargeInputs () throws IOException {
+	public void converterShouldAccumulateValuesForLargeInputs () throws IOException, JSONException {
 		Model jsonModel = readModelFromFile("jsonApiMultipleValues.ttl");
 		Model inputModel = readModelFromFile("liftedExampleMultipleValues.ttl");
 		RdfToJson conv = new RdfToJson();
 		String out = conv.buildJsonString(inputModel, jsonModel);
 		JSONObject expectedResult = new JSONObject(readFileToString("multipleValuesExpectedResult.json"));
+		assertEquals(expectedResult.toString(), out);
+	}
+
+	@Test
+	public void converterShouldGenerateEntireObjectStartingFromRoot () throws IOException, JSONException {
+		Model jsonModel = readModelFromFile("jsonApiFullModel.ttl");
+		Model inputModel = readModelFromFile("liftedExampleMultipleValues.ttl");
+		RdfToJson conv = new RdfToJson();
+		String out = conv.buildJsonString(inputModel, jsonModel);
+		JSONObject expectedResult = new JSONObject(readFileToString("expectedFullConnected.json"));
 		assertEquals(expectedResult.toString(), out);
 	}
 
@@ -73,7 +83,8 @@ public class RdfToJsonConverterTest {
 			"\n" +
 			"	iots:TestData iots:TestDataType iots:Number .\n" +
 			"}";
-		String jsonObjectModel = "json:ApiDescription {\n" +
+		String jsonObjectModel = "json:ApiDescription {\n"
+		+ "ctd:JsonModel json:hasRoot ctd:TestValue ." +
 		"	ctd:TestValue a json:Number ;\n" +
 		"		json:key \"value\"^^xsd:string ;\n" +
 		"		json:dataType iots:TestData ;\n" +
