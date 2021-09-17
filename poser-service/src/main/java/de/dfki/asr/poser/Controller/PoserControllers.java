@@ -1,5 +1,6 @@
 package de.dfki.asr.poser.Controller;
 
+import de.dfki.asr.poser.Converter.RdfToJson;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,6 +41,21 @@ public class PoserControllers {
 		Model jsonModel;
 		Model inputModel;
 		String resultJson;
+		try {
+			InputStream templateStream = this.getClass().getResourceAsStream("/".concat(loweringTemplateName));
+			String loweringTemplate = IOUtils.toString(templateStream, Charset.forName("utf-8"));
+			jsonModel = parseToTurtle(loweringTemplate);
+			inputModel = parseToTurtle(turtleInput);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		try {
+			RdfToJson jsonConverter = new RdfToJson();
+			resultJson = jsonConverter.buildJsonString(inputModel, jsonModel);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<>(resultJson, HttpStatus.OK);
 	}
 
 	private Model parseToTurtle(final String response) throws RDFHandlerException,
