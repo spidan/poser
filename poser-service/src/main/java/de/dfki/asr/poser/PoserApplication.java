@@ -1,5 +1,7 @@
 package de.dfki.asr.poser;
 
+import de.dfki.asr.poser.Converter.PoserGatewayFilterFactory;
+import de.dfki.asr.poser.Converter.PoserGatewayFilterFactory.PoserGatewayConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.gateway.route.RouteLocator;
@@ -13,11 +15,12 @@ public class PoserApplication {
 	}
 
 	@Bean
-	public RouteLocator myRoutes(RouteLocatorBuilder builder) {
+	public RouteLocator myRoutes(RouteLocatorBuilder builder,
+			PoserGatewayFilterFactory poserFactory) {
 		return builder.routes()
 				.route(p -> p
 					.path("/test")
-					.filters(f -> f.addRequestHeader("Hello", "World"))
+					.filters(f -> f.filter(poserFactory.apply(new PoserGatewayConfig())))
 				.uri("http://httpbin.org:80")).build();
 	}
 }
