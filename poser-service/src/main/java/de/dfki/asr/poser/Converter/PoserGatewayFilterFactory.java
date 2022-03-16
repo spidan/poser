@@ -5,20 +5,22 @@ import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFac
 import org.springframework.stereotype.Component;
 
 @Component
-public class PoserGatewayFilterFactory extends AbstractGatewayFilterFactory<PoserGatewayFilterFactory.PoserGatewayConfig> {
+public class PoserGatewayFilterFactory extends AbstractGatewayFilterFactory<PoserGatewayFilterFactory.Config> {
+
+	private static final Logger LOG = LoggerFactory.getLogger(PoserGatewayFilterFactory.class);
 
 	public PoserGatewayFilterFactory() {
-        super(PoserGatewayConfig.class);
+        super(Config.class);
     }
 
 	@Override
-	public GatewayFilter apply(PoserGatewayConfig config) {
+	public GatewayFilter apply(Config config) {
 		return (exchange, chain) -> {
 			return chain.filter(exchange);
 			};
 	}
 
-	public static class PoserGatewayConfig {
+	public static class Config {
 		public String transformToJSON() {
 			RdfToJson converter = new RdfToJson();
 			return "testomator";
