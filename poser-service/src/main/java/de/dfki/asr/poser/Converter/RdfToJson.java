@@ -4,15 +4,33 @@ import de.dfki.asr.poser.Namespace.JSON;
 import de.dfki.asr.poser.exceptions.DataTypeException;
 import de.dfki.asr.poser.util.InputDataReader;
 import de.dfki.asr.poser.util.RDFModelUtil;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.Set;
+import org.apache.commons.io.IOUtils;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.impl.LinkedHashModel;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFHandlerException;
+import org.eclipse.rdf4j.rio.RDFParseException;
+import org.eclipse.rdf4j.rio.RDFParser;
+import org.eclipse.rdf4j.rio.Rio;
+import org.eclipse.rdf4j.rio.UnsupportedRDFormatException;
+import org.eclipse.rdf4j.rio.helpers.StatementCollector;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 public class RdfToJson {
-
+	private static final Logger LOG = LoggerFactory.getLogger(RdfToJson.class);
 	private Model jsonModel;
 	/**
 	 * Receives data in ttl format, finds the corresponding json objects to be generated
@@ -108,4 +126,31 @@ public class RdfToJson {
 	private JSONObject addToResult(JSONObject resultObject, String jsonKey, Object jsonValue) {
 		return resultObject.put(jsonKey, jsonValue);
 	}
+
+	String buildJsonString(String inputModelAsString, String loweringTemplate) {
+		Model parsedJsonModel;
+		Model inputModel;
+		String resultJson;
+		LOG.info("Mapping body " + inputModelAsString + " with lowering template " + loweringTemplate);
+		try {
+			parsedJsonModel = parseToTurtle(loweringTemplate);
+			inputModel = parseToTurtle(inputModelAsString);
+			RdfToJson jsonConverter = new RdfToJson();
+			resultJson = jsonConverter.buildJsonString(inputModel, parsedJsonModel);
+			return resultJson;
+		} catch (Exception ex) {
+			LOG.error(ex.getMessage());
+			return "geht nit";
+		}
+	}
+
+	private Model parseToTurtle(final String response) throws RDFHandlerException,
+	    UnsupportedRDFormatException, UnsupportedEncodingException, IOException, RDFParseException {
+	InputStream rdfStream = new ByteArrayInputStream(response.getBytes("utf-8"));
+	RDFParser parser = Rio.createParser(RDFFormat.TRIG);
+	Model model = new LinkedHashModel();
+	parser.setRDFHandler(new StatementCollector(model));
+	parser.parse(rdfStream);
+	return model;
+    }
 }
