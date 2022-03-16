@@ -21,6 +21,13 @@ public class PoserGatewayFilterFactory extends AbstractGatewayFilterFactory<Pose
 	}
 
 	public static class Config {
+		@Getter
+		@Setter
+		private String loweringTemplateName;
+
+		public Config (final String templateName) {
+			this.loweringTemplateName = templateName;
+		}
 		public String transformToJSON() {
 			RdfToJson converter = new RdfToJson();
 			return "testomator";
