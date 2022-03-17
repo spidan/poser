@@ -18,7 +18,7 @@ public class PoserConfig {
 
 		return builder.routes()
 				.route(p -> p
-					.path("/echo")
+					.path("/forwardJson")
 					.filters(f -> f.cacheRequestBody(String.class)
 							.filter(poserFactory.apply(new PoserGatewayFilterFactory.Config("jsonApiMultipleValues.ttl")))
 							.changeRequestUri(ex -> {
