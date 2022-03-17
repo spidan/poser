@@ -1,6 +1,6 @@
 package de.dfki.asr.poser;
 
-import de.dfki.asr.poser.Converter.PoserGatewayFilterFactory;
+import de.dfki.asr.poser.gatewayFilters.PoserGatewayFilterFactory;
 import de.dfki.asr.poser.Converter.RdfToJson;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;

@@ -1,5 +1,6 @@
-package de.dfki.asr.poser.Converter;
+package de.dfki.asr.poser.gatewayFilters;
 
+import de.dfki.asr.poser.Converter.RdfToJson;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;

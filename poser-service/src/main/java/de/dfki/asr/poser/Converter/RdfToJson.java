@@ -127,7 +127,7 @@ public class RdfToJson {
 		return resultObject.put(jsonKey, jsonValue);
 	}
 
-	String buildJsonString(String inputModelAsString, String loweringTemplate) {
+	public String buildJsonString(String inputModelAsString, String loweringTemplate) {
 		Model parsedJsonModel;
 		Model inputModel;
 		String resultJson;
