@@ -1,6 +1,8 @@
 package de.dfki.asr.poser.gatewayFilters;
 
 import de.dfki.asr.poser.Converter.RdfToJson;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -30,18 +32,19 @@ public class PoserGatewayFilterFactory extends AbstractGatewayFilterFactory<Pose
 	public GatewayFilter apply(Config config) {
 		return (exchange, chain) -> {
 			String cachedRequestBody = exchange.getAttribute(ServerWebExchangeUtils.CACHED_REQUEST_BODY_ATTR);
-			String loweringTemplateName = config.getLoweringTemplateName();
+			String loweringTemplateName = exchange.getRequest().getHeaders().getFirst("LocalTemplate");
 			RdfToJson jsonConverter = new RdfToJson();
-			InputStream templateStream = this.getClass().getResourceAsStream("/".concat(loweringTemplateName));
-			try {
-				String loweringTemplate = IOUtils.toString(templateStream, Charset.forName("utf-8"));
+			File templateFile = new File(System.getProperty("user.dir").concat("/serviceTemplates/".concat(loweringTemplateName)));
+			try (FileInputStream fis = new FileInputStream(templateFile)) {
+				String loweringTemplate = IOUtils.toString(fis, Charset.forName("utf-8"));
 				String mappedRequestBody = jsonConverter.buildJsonString(cachedRequestBody, loweringTemplate);
-			ModifyRequestBodyGatewayFilterFactory.Config modifyRequestConfig = new ModifyRequestBodyGatewayFilterFactory.Config()
+				ModifyRequestBodyGatewayFilterFactory.Config modifyRequestConfig = new ModifyRequestBodyGatewayFilterFactory.Config()
                 .setContentType(ContentType.APPLICATION_JSON.getMimeType()) // change content type ...
                 .setRewriteFunction(String.class, String.class, (oExchange, newRequestBody) -> Mono.just(mappedRequestBody));
-			return new ModifyRequestBodyGatewayFilterFactory().apply(modifyRequestConfig).filter(exchange, chain);
-			} catch (IOException ex) {
-				return chain.filter(exchange);
+				return new ModifyRequestBodyGatewayFilterFactory().apply(modifyRequestConfig).filter(exchange, chain);
+			} catch (Exception ex) {
+				LOG.error("Error reading template file: " + ex.getMessage());
+				return null;
 			}
 		};
 	}
