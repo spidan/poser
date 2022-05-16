@@ -141,7 +141,7 @@ public class RDFModelUtil {
 	 */
 	public static String getCorrespondingInputValueType(Model jsonObjectModel, Model jsonModel) {
 		ValueFactory vf = SimpleValueFactory.getInstance();
-		IRI dataTypePredicateIri = vf.createIRI("http://some.json.ontology/dataType");
+		IRI dataTypePredicateIri = vf.createIRI("http://www.w3.org/2000/01/rdf-schema#isDefinedBy");
 		Optional<IRI> apiDataType = Models.objectIRI(jsonObjectModel.filter(null, dataTypePredicateIri, null));
 		if(apiDataType.isEmpty()) {
 			throw new DataTypeException("No input data type found for a value");
