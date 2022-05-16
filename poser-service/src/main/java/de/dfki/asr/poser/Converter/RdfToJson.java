@@ -43,7 +43,7 @@ public class RdfToJson {
 	public String buildJsonString(final Model inputModel, final Model jsonModel) {
 		this.jsonModel = jsonModel;
 
-		inputModel.setNamespace("rdfs", "https://www.w3.org/TR/rdf-schema/");
+		inputModel.setNamespace("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
 		inputModel.setNamespace("json", "http://some.json.ontology/");
 		JSONObject jsonResult = new JSONObject();
 		// check the RDF description of the JSON API model for the desired input type
