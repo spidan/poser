@@ -29,7 +29,7 @@ public class InputDataReader {
 		Model dataModel = data.filter(null, RDF.TYPE, dataTypeIri);
 		Set<Resource> subjectOfGivenType = dataModel.subjects();
 		if(subjectOfGivenType.isEmpty()) {
-			throw new NoSuchElementException("No resource of the given type found in input data");
+			throw new NoSuchElementException("No resource of the given type " + dataType + " with property " + propertyName + " found in input data");
 		}
 		Optional<Literal> dataValue = Models.objectLiteral(data.filter(subjectOfGivenType.iterator().next(), propertyNameIri, null));
 		if (dataValue.isEmpty()) {
