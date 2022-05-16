@@ -79,8 +79,9 @@ public class RdfToJson {
 		}
 		else {
 			String valueType = RDFModelUtil.getCorrespondingInputValueType(objectModel, jsonModel);
+			String inputType = RDFModelUtil.getInputDataTypeFromModel(valueType, jsonModel);
 			String propertyName = RDFModelUtil.getPredicateNameForTypeFromModel(valueType, jsonModel);
-			String valueResult = InputDataReader.getValueForType(valueType, propertyName, inputModel);
+			String valueResult = InputDataReader.getValueForType(inputType, propertyName, inputModel);
 			return addLiteralValueToKey(jsonDataType, resultObject, jsonKey, valueResult);
 		}
 	}
