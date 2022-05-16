@@ -115,10 +115,11 @@ public class RDFModelUtil {
 
 	public static String getPredicateNameForTypeFromModel(String dataType, Model jsonModel ) {
 		IRI dataTypeIri = SimpleValueFactory.getInstance().createIRI(dataType);
-		IRI dataTypeContext = SimpleValueFactory.getInstance().createIRI("http://some.json.ontology/InputDataType");
-		Set<IRI> predicates = jsonModel.filter(dataTypeIri, null, null, dataTypeContext).predicates();
+		IRI dataTypeContext = SimpleValueFactory.getInstance().createIRI("http://some.json.ontology/ReificationHeader");
+		IRI predicateIri = SimpleValueFactory.getInstance().createIRI("http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate");
+		Set<Value> predicates = jsonModel.filter(dataTypeIri, predicateIri, null, dataTypeContext).objects() ;
 		if (predicates.size() != 1) {
-			throw new DataTypeException("No unique data type definition found");
+			throw new DataTypeException("No unique data type definition found for " + dataType);
 		}
 		return predicates.iterator().next().stringValue();
 	}
