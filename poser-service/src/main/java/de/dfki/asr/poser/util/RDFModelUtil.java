@@ -124,6 +124,15 @@ public class RDFModelUtil {
 		return predicates.iterator().next().stringValue();
 	}
 
+	public static String getInputDataTypeFromModel(String dataType, Model jsonModel) {
+		IRI dataTypeIri = SimpleValueFactory.getInstance().createIRI(dataType);
+		IRI dataTypeContext = SimpleValueFactory.getInstance().createIRI("http://some.json.ontology/ReificationHeader");
+		Set<Value> inputType = jsonModel.filter(dataTypeIri, RDF.TYPE, null, dataTypeContext).objects() ;
+		if (inputType.size() != 1) {
+			throw new DataTypeException("No unique data type definition found for " + dataType);
+		}
+		return inputType.iterator().next().stringValue();
+	}
 	/**
 	 * Returns the type to be checked for in the input data set, depending on the description in the json object model
 	 * @param jsonObjectModel The model for the JSON object to be generated
