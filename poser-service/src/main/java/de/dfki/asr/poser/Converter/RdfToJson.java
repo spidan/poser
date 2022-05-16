@@ -10,11 +10,13 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Set;
+import org.eclipse.rdf4j.model.IRI;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.model.impl.LinkedHashModel;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.RDFHandlerException;
 import org.eclipse.rdf4j.rio.RDFParseException;
@@ -58,7 +60,8 @@ public class RdfToJson {
 		if (!RDFModelUtil.isLiteral(jsonDataType)) {
 			Set<Value> childValues = getChildValuesOfJsonObject(objectModel, jsonKey);
 			//if this object maps to a input data type, make sure to generate an object for each corresponding value set
-			if(objectModel.predicates().contains(JSON.DATA_TYPE)) {
+			IRI definedByIri = SimpleValueFactory.getInstance().createIRI("http://www.w3.org/2000/01/rdf-schema#", "isDefinedBy");
+			if(objectModel.predicates().contains(definedByIri)) {
 				String valueType = RDFModelUtil.getCorrespondingInputValueType(objectModel, jsonModel);
 				Model dataTypeModel = InputDataReader.getModelForType(valueType, inputModel);
 				for(Resource subj: dataTypeModel.subjects()) {
