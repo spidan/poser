@@ -2,7 +2,6 @@ package de.dfki.asr.poser.util;
 
 import de.dfki.asr.poser.Namespace.JSON;
 import de.dfki.asr.poser.exceptions.DataTypeException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -17,7 +16,6 @@ import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.util.Models;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
-import org.json.JSONObject;
 
 public class RDFModelUtil {
 
